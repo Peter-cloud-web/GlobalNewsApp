@@ -5,6 +5,7 @@ import android.app.DownloadManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.globalnewsapp.models.Article
 import com.example.globalnewsapp.models.NewsResponse
 import com.example.globalnewsapp.repository.NewsRepository
 import com.example.globalnewsapp.util.Resource
@@ -51,5 +52,14 @@ class NewsViewModel(app:Application,val newsRepository: NewsRepository) : ViewMo
             }
         }
         return Resource.Error(response.message())
+    }
+
+    fun saveArticle(article: Article) = viewModelScope.launch {
+        newsRepository.insertArticle(article)
+    }
+    fun fetchSavedArticles() = newsRepository.getSavedNews()
+
+    fun deleteArticle(article: Article) = viewModelScope.launch {
+        newsRepository.deleteArticle(article)
     }
 }
