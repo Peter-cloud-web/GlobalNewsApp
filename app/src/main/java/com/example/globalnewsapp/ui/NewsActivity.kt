@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.example.globalnewsapp.R
 import com.example.globalnewsapp.db.ArticleDatabase
@@ -26,8 +27,17 @@ class NewsActivity : AppCompatActivity() {
         val newsRepository = NewsRepository(ArticleDatabase(this))
         val viewModelProviderFactory = NewsViewModelProvider(application,newsRepository)
         viewModels = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
-        val navHostFragment= supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
+
+        setUpNavigation()
+
+    }
+
+    private fun setUpNavigation(){
+        val navHostFragment = getSupportFragmentManager().findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
         val navController= navHostFragment.navController
         bottomNavigationView.setupWithNavController(navController)
+
+//        NavigationUI.setupActionBarWithNavController(bottomNavigationView,navHostFragment.navController)
+
     }
 }
