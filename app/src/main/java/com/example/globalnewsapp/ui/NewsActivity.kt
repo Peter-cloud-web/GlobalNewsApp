@@ -61,8 +61,6 @@ class NewsActivity : AppCompatActivity() {
             true
         }
 
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
