@@ -10,4 +10,9 @@
     <string name="breaking_news">Breaking News</string>
     <string name="saved_news">Saved News</string>
     <string name="search_news">Search News</string>
+    <string name="github_repository">Github Repository</string>
+    <string name="about_developer">About developer</string>
+    <string name="rate_this_app">Rate this app</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>
