@@ -10,12 +10,12 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.globalnewsapp.R
+import com.example.globalnewsapp.databinding.FragmentSearchNewsBinding
 import com.example.globalnewsapp.ui.NewsActivity
 import com.example.globalnewsapp.ui.adapters.NewsAdapter
 import com.example.globalnewsapp.ui.viewmodel.NewsViewModel
 import com.example.globalnewsapp.util.Constants
 import com.example.globalnewsapp.util.Resource
-import kotlinx.android.synthetic.main.fragment_search_news.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -26,12 +26,16 @@ class SearchNewsFragment:Fragment(R.layout.fragment_search_news) {
     lateinit var viewModel: NewsViewModel
     val TAG = "SearchNewsFragment"
     lateinit var newsAdapter: NewsAdapter
+    private var fragmentSearchNewsBinding:FragmentSearchNewsBinding? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var binding = FragmentSearchNewsBinding.bind(view)
+        fragmentSearchNewsBinding = binding
+
         viewModel = (activity as NewsActivity).viewModels
-        setUpRecyclerView()
+        setUpRecyclerView(binding)
 
         newsAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
@@ -44,7 +48,7 @@ class SearchNewsFragment:Fragment(R.layout.fragment_search_news) {
         }
 
         var job: Job? = null
-        etSearch.addTextChangedListener { editable ->
+        binding.etSearch.addTextChangedListener { editable ->
             job?.cancel()
 
             job = MainScope().launch {
@@ -61,7 +65,7 @@ class SearchNewsFragment:Fragment(R.layout.fragment_search_news) {
         viewModel.searchNews.observe(viewLifecycleOwner, Observer { response->
             when(response){
                 is Resource.Success->{
-                    hideProgressBar()
+                    hideProgressBar(binding)
                     response.data?.let { newsResponse ->
                         newsAdapter.differ.submitList(newsResponse.articles.toList())
                         val totalPages = newsResponse.totalResults
@@ -70,14 +74,14 @@ class SearchNewsFragment:Fragment(R.layout.fragment_search_news) {
                 }
 
                 is Resource.Error->{
-                    hideProgressBar()
+                    hideProgressBar(binding)
                     response.message?.let { message->
                         Log.e(TAG, "An error occurred: $message" )
                         Toast.makeText(activity, "An error occurred: $message", Toast.LENGTH_LONG).show()
                     }
                 }
                 is Resource.Loading->{
-                    showProgressBar()
+                    showProgressBar(binding)
                 }
 
             }
@@ -85,20 +89,20 @@ class SearchNewsFragment:Fragment(R.layout.fragment_search_news) {
 
     }
 
-    private fun setUpRecyclerView(){
+    private fun setUpRecyclerView(binding: FragmentSearchNewsBinding){
         newsAdapter = NewsAdapter()
-        rvSearchNews.apply{
+        binding.rvSearchNews.apply{
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
         }
     }
 
-    private fun hideProgressBar(){
-        paginationProgressBar.visibility= View.INVISIBLE
+    private fun hideProgressBar(binding: FragmentSearchNewsBinding){
+        binding.paginationProgressBar.visibility= View.INVISIBLE
         isLoading= false
     }
-    private fun showProgressBar(){
-        paginationProgressBar.visibility= View.VISIBLE
+    private fun showProgressBar(binding: FragmentSearchNewsBinding){
+        binding.paginationProgressBar.visibility= View.VISIBLE
         isLoading= false
     }
 

@@ -14,11 +14,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.example.globalnewsapp.R
+import com.example.globalnewsapp.databinding.ActivityNewsBinding
 import com.example.globalnewsapp.db.ArticleDatabase
 import com.example.globalnewsapp.repository.NewsRepository
 import com.example.globalnewsapp.ui.viewmodel.NewsViewModel
 import com.example.globalnewsapp.ui.viewmodel.NewsViewModelProvider
-import kotlinx.android.synthetic.main.activity_news.*
 
 class NewsActivity : AppCompatActivity() {
 
@@ -27,21 +27,22 @@ class NewsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_news)
+        val binding = ActivityNewsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val newsRepository = NewsRepository(ArticleDatabase(this))
         val viewModelProviderFactory = NewsViewModelProvider(application,newsRepository)
         viewModels = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
 
-        setUpNavigation()
+        setUpNavigation(binding)
 
-        toggle = ActionBarDrawerToggle(this,drawer_layout,R.string.open,R.string.close)
-        drawer_layout.addDrawerListener(toggle)
+        toggle = ActionBarDrawerToggle(this,binding.drawerLayout,R.string.open,R.string.close)
+        binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        navMenu.itemIconTintList = null
+        binding.navMenu.itemIconTintList = null
 
-        navMenu.setNavigationItemSelectedListener {
+        binding.navMenu.setNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.github_repo ->
                     startActivity(
@@ -70,10 +71,10 @@ class NewsActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun setUpNavigation(){
+    private fun setUpNavigation(binding: ActivityNewsBinding){
         val navHostFragment = getSupportFragmentManager().findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
         val navController= navHostFragment.navController
-        bottomNavigationView.setupWithNavController(navController)
+        binding.bottomNavigationView.setupWithNavController(navController)
 
     }
 }

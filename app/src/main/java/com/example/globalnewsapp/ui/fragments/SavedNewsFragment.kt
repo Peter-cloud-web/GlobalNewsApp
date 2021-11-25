@@ -7,21 +7,25 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.globalnewsapp.R
+import com.example.globalnewsapp.databinding.FragmentSavedNewsBinding
 import com.example.globalnewsapp.ui.NewsActivity
 import com.example.globalnewsapp.ui.adapters.NewsAdapter
 import com.example.globalnewsapp.ui.viewmodel.NewsViewModel
-import kotlinx.android.synthetic.main.fragment_saved_news.*
 
 class SavedNewsFragment:Fragment(R.layout.fragment_saved_news) {
 
     lateinit var viewModels: NewsViewModel
     lateinit var newsAdapter:NewsAdapter
+    private var fragmentSavedNewsFragment:FragmentSavedNewsBinding? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var binding = FragmentSavedNewsBinding.bind(view)
+        fragmentSavedNewsFragment = binding
+
         viewModels =  (activity as NewsActivity).viewModels
-        setUpRecyclerView()
+        setUpRecyclerView(binding)
 
         newsAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
@@ -39,9 +43,9 @@ class SavedNewsFragment:Fragment(R.layout.fragment_saved_news) {
         })
     }
 
-    private fun setUpRecyclerView(){
+    private fun setUpRecyclerView(binding: FragmentSavedNewsBinding){
         newsAdapter = NewsAdapter()
-        rvSavedNews.apply {
+       binding.rvSavedNews.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
         }
