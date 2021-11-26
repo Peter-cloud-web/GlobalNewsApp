@@ -3,9 +3,18 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs'
 
+def localPropertiesFile = rootProject.file("local.properties")
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(localPropertiesFile))
+
+
 android {
     compileSdkVersion 31
     buildToolsVersion "29.0.3"
+
+    defaultConfig{
+        buildConfigField "String", "NEWS_API_KEY",localProperties['news_access_key']
+    }
 
     buildFeatures {
         viewBinding true
