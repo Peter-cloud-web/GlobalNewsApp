@@ -3,15 +3,12 @@ package com.example.globalnewsapp.ui
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.example.globalnewsapp.R
 import com.example.globalnewsapp.databinding.ActivityNewsBinding
@@ -21,8 +18,6 @@ import com.example.globalnewsapp.ui.viewmodel.NewsViewModel
 import com.example.globalnewsapp.ui.viewmodel.NewsViewModelProvider
 
 class NewsActivity : AppCompatActivity() {
-
-    lateinit var viewModels:NewsViewModel
     lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,25 +25,21 @@ class NewsActivity : AppCompatActivity() {
         val binding = ActivityNewsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val newsRepository = NewsRepository(ArticleDatabase(this))
-        val viewModelProviderFactory = NewsViewModelProvider(application,newsRepository)
-        viewModels = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
-
         setUpNavigation(binding)
 
-        toggle = ActionBarDrawerToggle(this,binding.drawerLayout,R.string.open,R.string.close)
+        toggle = ActionBarDrawerToggle(this, binding.drawerLayout, R.string.open, R.string.close)
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.navMenu.itemIconTintList = null
 
         binding.navMenu.setNavigationItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.github_repo ->
                     startActivity(
                         Intent(
-                         ACTION_VIEW,
-                         Uri.parse("https://github.com/Peter-cloud-web/GlobalNewsApp")
+                            ACTION_VIEW,
+                            Uri.parse("https://github.com/Peter-cloud-web/GlobalNewsApp")
                         )
                     )
                 R.id.developer ->
@@ -65,15 +56,16 @@ class NewsActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(toggle.onOptionsItemSelected(item)){
+        if (toggle.onOptionsItemSelected(item)) {
             return true
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun setUpNavigation(binding: ActivityNewsBinding){
-        val navHostFragment = getSupportFragmentManager().findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
-        val navController= navHostFragment.navController
+    private fun setUpNavigation(binding: ActivityNewsBinding) {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
+        val navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
 
     }

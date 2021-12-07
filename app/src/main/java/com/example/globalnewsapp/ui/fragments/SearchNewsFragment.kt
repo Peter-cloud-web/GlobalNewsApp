@@ -7,13 +7,17 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.globalnewsapp.R
 import com.example.globalnewsapp.databinding.FragmentSearchNewsBinding
+import com.example.globalnewsapp.db.ArticleDatabase
+import com.example.globalnewsapp.repository.NewsRepository
 import com.example.globalnewsapp.ui.NewsActivity
 import com.example.globalnewsapp.ui.adapters.NewsAdapter
 import com.example.globalnewsapp.ui.viewmodel.NewsViewModel
+import com.example.globalnewsapp.ui.viewmodel.NewsViewModelProvider
 import com.example.globalnewsapp.util.Constants
 import com.example.globalnewsapp.util.Resource
 import kotlinx.coroutines.Job
@@ -21,20 +25,24 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class SearchNewsFragment:Fragment(R.layout.fragment_search_news) {
+class SearchNewsFragment : Fragment(R.layout.fragment_search_news) {
 
     lateinit var viewModel: NewsViewModel
     val TAG = "SearchNewsFragment"
     lateinit var newsAdapter: NewsAdapter
-    private var fragmentSearchNewsBinding:FragmentSearchNewsBinding? = null
+    private var fragmentSearchNewsBinding: FragmentSearchNewsBinding? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         var binding = FragmentSearchNewsBinding.bind(view)
+
         fragmentSearchNewsBinding = binding
 
-        viewModel = (activity as NewsActivity).viewModels
+        val newsRepository = NewsRepository(ArticleDatabase(requireContext() as NewsActivity))
+        val viewModelProviderFactory = NewsViewModelProvider(newsRepository)
+        viewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
+
         setUpRecyclerView(binding)
 
         newsAdapter.setOnItemClickListener {
@@ -62,9 +70,9 @@ class SearchNewsFragment:Fragment(R.layout.fragment_search_news) {
             }
 
         }
-        viewModel.searchNews.observe(viewLifecycleOwner, Observer { response->
-            when(response){
-                is Resource.Success->{
+        viewModel.searchNews.observe(viewLifecycleOwner, Observer { response ->
+            when (response) {
+                is Resource.Success -> {
                     hideProgressBar(binding)
                     response.data?.let { newsResponse ->
                         newsAdapter.differ.submitList(newsResponse.articles.toList())
@@ -73,14 +81,15 @@ class SearchNewsFragment:Fragment(R.layout.fragment_search_news) {
                     }
                 }
 
-                is Resource.Error->{
+                is Resource.Error -> {
                     hideProgressBar(binding)
-                    response.message?.let { message->
-                        Log.e(TAG, "An error occurred: $message" )
-                        Toast.makeText(activity, "An error occurred: $message", Toast.LENGTH_LONG).show()
+                    response.message?.let { message ->
+                        Log.e(TAG, "An error occurred: $message")
+                        Toast.makeText(activity, "An error occurred: $message", Toast.LENGTH_LONG)
+                            .show()
                     }
                 }
-                is Resource.Loading->{
+                is Resource.Loading -> {
                     showProgressBar(binding)
                 }
 
@@ -89,24 +98,25 @@ class SearchNewsFragment:Fragment(R.layout.fragment_search_news) {
 
     }
 
-    private fun setUpRecyclerView(binding: FragmentSearchNewsBinding){
+    private fun setUpRecyclerView(binding: FragmentSearchNewsBinding) {
         newsAdapter = NewsAdapter()
-        binding.rvSearchNews.apply{
+        binding.rvSearchNews.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
         }
     }
 
-    private fun hideProgressBar(binding: FragmentSearchNewsBinding){
-        binding.paginationProgressBar.visibility= View.INVISIBLE
-        isLoading= false
-    }
-    private fun showProgressBar(binding: FragmentSearchNewsBinding){
-        binding.paginationProgressBar.visibility= View.VISIBLE
-        isLoading= false
+    private fun hideProgressBar(binding: FragmentSearchNewsBinding) {
+        binding.paginationProgressBar.visibility = View.INVISIBLE
+        isLoading = false
     }
 
-    var isLastPage= false
-    var isLoading= false
+    private fun showProgressBar(binding: FragmentSearchNewsBinding) {
+        binding.paginationProgressBar.visibility = View.VISIBLE
+        isLoading = false
+    }
+
+    var isLastPage = false
+    var isLoading = false
 }
 

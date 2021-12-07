@@ -5,8 +5,8 @@ import com.example.globalnewsapp.models.Article
 
 class RecyclerViewDiffUtil {
 
-    companion object{
-         val differCallBack = object : DiffUtil.ItemCallback<Article>(){
+    companion object {
+        val differCallBack = object : DiffUtil.ItemCallback<Article>() {
             override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
                 return oldItem.url == newItem.url
             }

@@ -1,7 +1,6 @@
 package com.example.globalnewsapp.ui.viewmodel
 
 import android.app.Application
-import android.app.DownloadManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +11,7 @@ import com.example.globalnewsapp.util.Resource
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
-class NewsViewModel(app:Application,val newsRepository: NewsRepository) : ViewModel() {
+class NewsViewModel(val newsRepository: NewsRepository) : ViewModel() {
 
     val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     var breakingNewsPage = 1
@@ -36,8 +35,8 @@ class NewsViewModel(app:Application,val newsRepository: NewsRepository) : ViewMo
         searchNews.postValue(handleSearchNewsResponse(response))
     }
 
-    private fun handleBreakingNewsResponse(response: Response<NewsResponse>) : Resource<NewsResponse> {
-        if(response.isSuccessful) {
+    private fun handleBreakingNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
+        if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
                 return Resource.Success(resultResponse)
             }
@@ -45,8 +44,8 @@ class NewsViewModel(app:Application,val newsRepository: NewsRepository) : ViewMo
         return Resource.Error(response.message())
     }
 
-    private fun handleSearchNewsResponse(response: Response<NewsResponse>) : Resource<NewsResponse> {
-        if(response.isSuccessful) {
+    private fun handleSearchNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
+        if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
                 return Resource.Success(resultResponse)
             }
@@ -57,9 +56,14 @@ class NewsViewModel(app:Application,val newsRepository: NewsRepository) : ViewMo
     fun saveArticle(article: Article) = viewModelScope.launch {
         newsRepository.insertArticle(article)
     }
+
     fun fetchSavedArticles() = newsRepository.getSavedNews()
 
     fun deleteArticle(article: Article) = viewModelScope.launch {
         newsRepository.deleteArticle(article)
     }
+
+//    private fun hasInternetConnection():Boolean{
+//        val connectivityManager = getApplication<AppApplication>().getSystemService(Context.ACCESSIBILITY_SERVICE) as ConnectivityManager
+//    }
 }
