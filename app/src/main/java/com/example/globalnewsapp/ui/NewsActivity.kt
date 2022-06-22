@@ -5,9 +5,9 @@ import android.content.Intent.ACTION_VIEW
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.globalnewsapp.R
@@ -19,6 +19,9 @@ import com.example.globalnewsapp.ui.viewmodel.NewsViewModelProvider
 
 class NewsActivity : AppCompatActivity() {
     lateinit var toggle: ActionBarDrawerToggle
+    val viewModel:NewsViewModel by viewModels{
+        NewsViewModelProvider(NewsRepository(ArticleDatabase(this)))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,8 +66,7 @@ class NewsActivity : AppCompatActivity() {
     }
 
     private fun setUpNavigation(binding: ActivityNewsBinding) {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
 

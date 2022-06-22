@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorDark"
+    android:background="@color/colorWhite"
     tools:context=".SplashScreenActivity">
 
     <ImageView
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/acme"
         android:text="@string/making_your_daiies_informative"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/colorBlack"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

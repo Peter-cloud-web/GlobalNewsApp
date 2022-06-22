@@ -25,22 +25,23 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
     lateinit var viewModel: NewsViewModel
     lateinit var newsAdapter: NewsAdapter
-    private var fragmentBreakingNewsBinding: FragmentBreakingNewsBinding? = null
-
-    val TAG = "BreakingNewsFragment"
+    private lateinit var binding: FragmentBreakingNewsBinding
+    private val TAG = "BreakingNewsFragment"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val binding = FragmentBreakingNewsBinding.bind(view)
+        binding = FragmentBreakingNewsBinding.bind(view)
 
-        fragmentBreakingNewsBinding = binding
 
         val newsRepository = NewsRepository(ArticleDatabase(requireContext() as NewsActivity))
         val viewModelProviderFactory = NewsViewModelProvider(newsRepository)
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
 
         setupRecyclerView(binding)
+
+
+
 
         newsAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
@@ -58,11 +59,6 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
                     hideProgressBar(binding)
                     response.data?.let { newsResponse ->
                         newsAdapter.differ.submitList(newsResponse.articles)
-                        val totalPages = newsResponse.totalResults / Constants.QUERY_PAGE_SIZE + 2
-                        isLastPage = viewModel.breakingNewsPage == totalPages
-                        if (isLastPage) {
-                            binding.rvBreakingNews.setPadding(0, 0, 0, 0)
-                        }
                     }
                 }
                 is Resource.Error -> {

@@ -1,5 +1,6 @@
 package com.example.globalnewsapp.ui.fragments
 
+import android.app.Application
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
@@ -19,43 +20,46 @@ import com.google.android.material.snackbar.Snackbar
 
 class ArticleFragment : Fragment(R.layout.fragment_article) {
 
-    lateinit var viewModel: NewsViewModel
-    val args: ArticleFragmentArgs by navArgs()
-    private var fragmentArticleBinding: FragmentArticleBinding? = null
+    class ArticleFragment : Fragment(R.layout.fragment_article) {
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        lateinit var viewModel: NewsViewModel
+        val args: ArticleFragmentArgs by navArgs()
+        private var fragmentArticleBinding: FragmentArticleBinding? = null
 
-        val binding = FragmentArticleBinding.bind(view)
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
 
-        fragmentArticleBinding = binding
+            val binding = FragmentArticleBinding.bind(view)
 
-        val newsRepository = NewsRepository(ArticleDatabase(requireContext() as NewsActivity))
-        val viewModelProviderFactory = NewsViewModelProvider(newsRepository)
-        viewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
+            fragmentArticleBinding = binding
 
-        val article = args.article
-        binding.webView.apply {
-            webViewClient = WebViewClient()
-            loadUrl(article.url)
+            val newsRepository = NewsRepository(ArticleDatabase(requireContext() as NewsActivity))
+            val viewModelProviderFactory = NewsViewModelProvider(newsRepository)
+            viewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
 
-            webViewClient = object : WebViewClient() {
-                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                    super.onPageStarted(view, url, favicon)
-                    binding.progressBar.visibility = View.VISIBLE
+            val article = args.article
+            binding.webView.apply {
+                webViewClient = WebViewClient()
+                loadUrl(article.url)
+
+                webViewClient = object : WebViewClient() {
+                    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                        super.onPageStarted(view, url, favicon)
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        super.onPageFinished(view, url)
+                        binding.progressBar.visibility = View.GONE
+                    }
+
                 }
-
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    super.onPageFinished(view, url)
-                    binding.progressBar.visibility = View.GONE
-                }
-
+            }
+            binding.fab.setOnClickListener {
+                viewModel.saveArticle(article)
+                Snackbar.make(view, "Article successfully saved", Snackbar.LENGTH_SHORT).show()
             }
         }
-        binding.fab.setOnClickListener {
-            viewModel.saveArticle(article)
-            Snackbar.make(view, "Article successfully saved", Snackbar.LENGTH_SHORT).show()
-        }
-    }
 
+    }
 }

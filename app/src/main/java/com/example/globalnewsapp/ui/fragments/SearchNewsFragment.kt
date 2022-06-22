@@ -30,20 +30,23 @@ class SearchNewsFragment : Fragment(R.layout.fragment_search_news) {
     lateinit var viewModel: NewsViewModel
     val TAG = "SearchNewsFragment"
     lateinit var newsAdapter: NewsAdapter
-    private var fragmentSearchNewsBinding: FragmentSearchNewsBinding? = null
+    lateinit var binding : FragmentSearchNewsBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var binding = FragmentSearchNewsBinding.bind(view)
+        binding = FragmentSearchNewsBinding.bind(view)
 
-        fragmentSearchNewsBinding = binding
+        viewModel = (activity as NewsActivity).viewModel
+
+
 
         val newsRepository = NewsRepository(ArticleDatabase(requireContext() as NewsActivity))
         val viewModelProviderFactory = NewsViewModelProvider(newsRepository)
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
 
         setUpRecyclerView(binding)
+
 
         newsAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {

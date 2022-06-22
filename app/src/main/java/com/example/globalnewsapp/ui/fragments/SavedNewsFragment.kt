@@ -35,6 +35,7 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
 
         setUpRecyclerView(binding)
 
+
         newsAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
                 putSerializable("article", it)
@@ -45,8 +46,8 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
             )
         }
 
-        viewModel.fetchSavedArticles().observe(viewLifecycleOwner, Observer { articles ->
-            newsAdapter.differ.submitList(articles)
+        viewModel.fetchSavedArticles().observe(viewLifecycleOwner, Observer { article ->
+            newsAdapter.differ.submitList(article)
 
         })
     }

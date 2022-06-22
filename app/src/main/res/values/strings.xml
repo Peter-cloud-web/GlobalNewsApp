@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GlobalNews App</string>
+    <string name="app_name">News App</string>
     <string name="source">SOURCE</string>
     <string name="title">TITLE</string>
     <string name="description">DESCRIPTION</string>
@@ -16,4 +16,5 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="making_your_daiies_informative">Making your daiies informative</string>
+    <string name="sources">Source</string>
 </resources>
